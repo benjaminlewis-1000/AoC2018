@@ -40,7 +40,7 @@ for guard in guard_compilation.keys():
 print "Sleepiest guard is {}".format(sleepiest_guard)
 best_min = guard_compilation[sleepiest_guard][0].argmax()
 print "Best minute is " + str(best_min)
-print "Answer is " + str(best_min * int(sleepiest_guard))
+print "Answer to part 1 is " + str(best_min * int(sleepiest_guard))
 
 # Part 2
 most_sleepy_times = 0
@@ -55,4 +55,4 @@ for guard in guard_compilation.keys():
 sleepy_minute = guard_compilation[guard_num][0].argmax()
 print guard_compilation[guard_num][0]
 print most_sleepy_times
-print "Sleepy times times minute: " + str( sleepy_minute * guard_num )
+print "Sleepy times times minute (part 2 answer): " + str( sleepy_minute * guard_num )
