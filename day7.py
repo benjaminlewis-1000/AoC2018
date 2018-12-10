@@ -1,72 +1,57 @@
-#! /usr/bin/env python
-
+import collections
 import re
 
-def moveLeft(idx):
-    if len(instructionList) > 1:
-        while idx > 0 and instructionList[idx] < instructionList[idx - 1]:
-            popval = instructionList.pop(idx)
-            instructionList.insert(idx-1, popval)
-            idx -= 1
+with open('day7_input.txt') as f:
+    lines = f.read().split('\n')
 
-instructionList = []
-def putLeftOf(instruction):
-    order = re.search('Step ([A-Z]) .* before step ([A-Z]).*', instruction)
-    first = order.group(1)
-    second = order.group(2)
-    # print first, second
+    alllet = set()
+    deps = collections.defaultdict(set)
+    for line in lines:
+        m = re.match(r'^Step (.) must be finished before step (.) can begin.$', line)
+        deps[m.group(2)].add(m.group(1))
+        alllet.add(m.group(2))
+        alllet.add(m.group(1))
+
+    reml = sorted(alllet)
+    print reml
+    print deps
+    print deps.keys()
+    done = set()
+    order = ''
+    while reml:
+        print order
+        for i, c in enumerate(reml):
+            print i, c
+            if not (deps[c] - done):
+                order += c
+                print deps[c]
+                done.add(c)
+                del reml[i]
+                break
+
+    print order
 
 
-
-    if second in instructionList:
-        idx2 = instructionList.index(second)
-    else:
-        instructionList.append(second)
-        moveLeft(len(instructionList) - 1)
-
-    # print instructionList
-
-    idx2 = instructionList.index(second)
-    if first in instructionList:
-        idx1 = instructionList.index(first)
-        if idx1 < idx2:
-            pass
+    reml = sorted(alllet)
+    done_time = {}
+    busy_until = [0, 0, 0, 0, 0]
+    order = ''
+    time = 0
+    while reml:
+        if all(t > time for t in busy_until):
+            time = min(busy_until)
+        for i, c in enumerate(reml):
+            if all(d in done_time and done_time[d] <= time for d in deps[c]):
+                order += c
+                for ib, b in enumerate(busy_until):
+                    if b <= time:
+                        busy_until[ib] = time + 60 + ord(c) - 64
+                        done_time[c] = busy_until[ib]
+                        break
+                print c, 'starts at', time, 'done at', done_time[c]
+                del reml[i]
+                break
         else:
-            valpop = instructionList.pop(idx1)
-            instructionList.insert(max(idx2, 0), valpop)
-            moveLeft(instructionList.index(valpop))
-    else:
-        if idx2 == 0:
-            instructionList.insert(0, first)
-        else:
-            instructionList.insert(idx2, first)
-            moveLeft(idx2)
-
-
-
-instructions = '''Step C must be finished before step A can begin.
-Step C must be finished before step F can begin.
-Step A must be finished before step B can begin.
-Step A must be finished before step D can begin.
-Step B must be finished before step E can begin.
-Step D must be finished before step E can begin.
-Step F must be finished before step E can begin.'''
-
-with open('day7_input.txt') as fh:
-    instructions = fh.read()
-# import random
-# random.seed(1)
-
-steps = instructions.split('\n')
-# random.shuffle(steps)
-# print '\n'.join(steps)
-
-for eachStep in steps:
-    print eachStep
-    putLeftOf(eachStep)
-    print instructionList
-
-print steps[0]
-print instructionList
-
-print ''.join(instructionList)
+            time = min(t for t in busy_until if t > time)
+  
+    print max(busy_until)

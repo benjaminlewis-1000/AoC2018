@@ -42,12 +42,9 @@ def get_second(start, end, stepsize, min_extent, min_sec):
 
         extent = [pos_max_x - pos_min_x, pos_max_y - pos_min_y]
         extent_area =  extent[0] * extent[1]
-        sleep(0.001)
         if extent_area < min_extent:
             min_extent = extent_area
             min_sec = sec
-        if sec % 1000 == 0:
-            print sec
     return min_sec, min_extent
 
 extent = [pos_max_x - pos_min_x, pos_max_y - pos_min_y]
@@ -58,8 +55,7 @@ ms, min_extent = get_second(ms - 500, ms + 500, 50, min_extent, ms)
 ms, min_extent = get_second(ms - 50, ms + 50, 1, min_extent, ms)
 
 
-print 'ms is: ' + str(ms)
-print min_extent
+print 'Seconds to wait is: ' + str(ms)
 
 optimal_position = positions + ms * velocities
 pos_max = np.max(optimal_position, 1)
@@ -71,9 +67,20 @@ pos_min_y = pos_min[1]
 
 optimal_position = optimal_position - np.array([[pos_min_x], [pos_min_y]])
 
-print pos_max_x
-print pos_min_x
+# print pos_max_x
+# print pos_min_x
 
+max_plt = np.max(optimal_position, 1)
+max_plt_x = max_plt[0] + 1 
+max_plt_y = max_plt[1] + 1
+
+img = np.zeros([max_plt_y, max_plt_x])
+for j in range(len(optimal_position[0])):
+    img[optimal_position[1][j], optimal_position[0][j]] = 1
+
+from matplotlib import pyplot as plt
+aa = plt.imshow(img)
+plt.show()
 
 
 # print extent
