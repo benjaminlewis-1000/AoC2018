@@ -97,7 +97,7 @@ grid[:, :] = 1
 grid[clist2[1][0], clist2[1][1]] = -1
 
 for i in range(1, len(coord_list)):
-    print "Calculating for coordinate " + str(i + 1) + "..."
+    print "Calculating for coordinate {}/{}...".format(i + 1, len(coord_list) )
     mark_closest(1, i + 1)
 
 unique, counts = np.unique(grid, return_counts=True)

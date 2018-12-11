@@ -49,13 +49,32 @@ def compute_scores(scores, num_players):
 
 player_scores = compute_scores(scores, num_elves)
 winning_score = max(player_scores)
-print "The winning score is " + str(winning_score)
+print "The winning score, part 1, is " + str(winning_score)
 
 # Part 2
-board, scores = construct_game(last_marble * 100)
-player_scores = compute_scores(scores, num_elves)
-winning_score = max(player_scores)
-# While this eventually gets the right answer, I looked up
-# a faster implementation on reddit after getting the answer. 
-# See day9_2.py
-print "The winning score is " + str(winning_score)
+# Stolen from reddit after my (correct) solution takes a long time.
+from collections import deque, defaultdict
+def play_game(max_players, last_marble):
+    scores = defaultdict(int)
+    circle = deque([0])
+
+    for marble in range(1, last_marble + 1):
+        if marble % 23 == 0:
+            circle.rotate(7)
+            scores[marble % max_players] += marble + circle.pop()
+            circle.rotate(-1)
+        else:
+            circle.rotate(-1)
+            circle.append(marble)
+
+    return max(scores.values()) if scores else 0
+
+print "The winning score, part 2, is " + str(play_game(430, 71588 * 100))
+
+
+# board, scores = construct_game(last_marble * 100)
+# player_scores = compute_scores(scores, num_elves)
+# winning_score = max(player_scores)
+# # While this eventually gets the right answer, I looked up
+# # a faster implementation on reddit after getting the answer. 
+# # See day9_2.py
